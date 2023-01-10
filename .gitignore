@@ -1,5 +1,7 @@
 # App
 /src/*/resources/telegram_bot_conf.properties
+/src/*/resources/database_conf.properties
+
 
 .gradle
 build/

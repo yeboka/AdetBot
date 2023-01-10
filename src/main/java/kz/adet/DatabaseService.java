@@ -1,22 +1,29 @@
 package kz.adet;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.*;
+import java.util.Properties;
 
 public class DatabaseService {
-    private static final String URL = "jdbc:postgresql://localhost:49153/adet";
-    private static final String USERNAME = "postgres";
-    private static final String PASSWORD = "postgrespw";
 
     private static Connection connection;
 
-    static {
+    public DatabaseService () throws IOException {
+        InputStream inputStream = Main.class.getClassLoader().getResourceAsStream("database_conf.properties");
+        Properties properties = new Properties();
+        properties.load(inputStream);
+
+        String url = properties.getProperty("db.url");
+        String username = properties.getProperty("db.username");
+        String password = properties.getProperty("db.password");
+
         try {
-            connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+            connection = DriverManager.getConnection(url, username, password);
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
-
 
     public void getTable () throws SQLException {
         Statement statement = connection.createStatement();
