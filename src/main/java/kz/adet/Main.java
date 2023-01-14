@@ -6,7 +6,6 @@ import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.sql.SQLException;
 import java.util.Properties;
 
 public class Main{
@@ -18,12 +17,9 @@ public class Main{
         String botUsername = properties.getProperty("bot.username");
         String botToken = properties.getProperty("bot.token");
 
-        DatabaseService db = new DatabaseService();
-        try {
-            db.getTable();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        NotificationService notificationService = new NotificationService(botToken, botUsername);
+        notificationService.start();
+
 
         TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);
         telegramBotsApi.registerBot(new AdetBot(botUsername, botToken));

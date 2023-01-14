@@ -20,7 +20,7 @@ public class SwitchingLanguageService {
 
     }
 
-    public String getGreeting(long chatid) throws SQLException, IOException {
+    public static String getGreeting(long chatid) throws SQLException, IOException {
         InputStream inputStream = SwitchingLanguageService.class.getClassLoader().getResourceAsStream(db.getLang(chatid)+".properties");
         Properties property = new Properties();
         property.load(inputStream);
@@ -28,7 +28,7 @@ public class SwitchingLanguageService {
         return property.getProperty("greeting");
     }
 
-    public String getNotification(long chatid) throws SQLException, IOException {
+    public static String getNotification(long chatid) throws SQLException, IOException {
         InputStream inputStream = SwitchingLanguageService.class.getClassLoader().getResourceAsStream(db.getLang(chatid)+".properties");
         Properties property = new Properties();
         property.load(inputStream);

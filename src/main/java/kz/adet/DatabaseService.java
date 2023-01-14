@@ -27,22 +27,7 @@ public class DatabaseService {
         }
     }
 
-    public void getTable () throws SQLException {
-        Statement statement = connection.createStatement();
-
-        String query = "select * from users";
-
-        ResultSet resultSet = statement.executeQuery(query);
-
-        while (resultSet.next()) {
-            System.out.println(resultSet.getInt(1));
-            System.out.println(resultSet.getString(2));
-            System.out.println(resultSet.getString(3));
-            System.out.println(resultSet.getString(4));
-        }
-    }
-
-    public List<Long> getChatIds () throws SQLException {
+    public List<Long> getChatIds() throws SQLException {
         List<Long> list = new ArrayList<>();
 
         PreparedStatement statement = connection.prepareStatement("select chatid from activehabits;");
@@ -89,4 +74,6 @@ public class DatabaseService {
 
         return resultSet.getString("nameofhabit");
     }
+
+
 }
