@@ -8,14 +8,12 @@ import java.util.List;
 import java.util.Properties;
 
 public class DatabaseService {
+    // FIXME try to process exception if we lose connection to DB
+    private Connection connection;
+    private static DatabaseService databaseService;
 
-    private static Connection connection;
-
-    public DatabaseService () throws IOException {
-        InputStream inputStream = Main.class.getClassLoader().getResourceAsStream("database_conf.properties");
-        Properties properties = new Properties();
-        properties.load(inputStream);
-
+    private DatabaseService () throws IOException {
+        Properties properties = getProperties();
         String url = properties.getProperty("db.url");
         String username = properties.getProperty("db.username");
         String password = properties.getProperty("db.password");
@@ -27,11 +25,22 @@ public class DatabaseService {
         }
     }
 
+    public static DatabaseService getInstance() throws IOException {
+        if (databaseService != null) return databaseService;
+        else return databaseService = new DatabaseService();
+    }
+
+    public Properties getProperties() throws IOException {
+        InputStream inputStream = Main.class.getClassLoader().getResourceAsStream("database_conf.properties");
+        Properties properties = new Properties();
+        properties.load(inputStream);
+
+        return properties;
+    }
+
     public List<Long> getChatIds() throws SQLException {
         List<Long> list = new ArrayList<>();
-
         PreparedStatement statement = connection.prepareStatement("select chatid from activehabits;");
-
         ResultSet resultSet = statement.executeQuery();
 
         while (resultSet.next()) {
@@ -42,22 +51,18 @@ public class DatabaseService {
     }
 
     public String getLang(long chatId) throws SQLException {
-
         PreparedStatement statement = connection.prepareStatement("select language_ from users where chatid = ?;");
         statement.setLong(1, chatId);
-
         ResultSet resultSet = statement.executeQuery();
         resultSet.next();
-        String lang = resultSet.getString("language_");
 
-        return lang;
+        return resultSet.getString("language_");
+
     }
 
     public String getFirstName(long chatId) throws SQLException {
-
         PreparedStatement statement = connection.prepareStatement("select firstname from users where chatid = ?;");
         statement.setLong(1, chatId);
-
         ResultSet resultSet = statement.executeQuery();
         resultSet.next();
 
@@ -65,10 +70,8 @@ public class DatabaseService {
     }
 
     public String getNameOfHabit(long chatId) throws SQLException {
-
         PreparedStatement statement = connection.prepareStatement("select nameofhabit from activehabits where chatid = ?;");
         statement.setLong(1, chatId);
-
         ResultSet resultSet = statement.executeQuery();
         resultSet.next();
 
