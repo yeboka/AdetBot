@@ -23,7 +23,7 @@ public class NotificationService extends Thread {
         while (true) {
             LocalDateTime now = LocalDateTime.now();
             // "15:00"
-            TimeEvaluateService timeToSleep = new TimeEvaluateService(22, 0);
+            TimeEvaluateService timeToSleep = new TimeEvaluateService(15, 0);
             Thread.sleep(timeToSleep.getMillisToSleep(now.getLong(ChronoField.MILLI_OF_DAY)));
 
             DatabaseService databaseService = new DatabaseService();
