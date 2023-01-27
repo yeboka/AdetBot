@@ -16,6 +16,8 @@ dependencies {
     implementation 'org.telegram:telegrambots:6.4.0'
     implementation 'org.postgresql:postgresql:42.5.1'
 
+    implementation 'com.vdurmont:emoji-java:3.2.0'
+
 
     compileOnly 'org.projectlombok:lombok:1.18.24'
     annotationProcessor 'org.projectlombok:lombok:1.18.24'
