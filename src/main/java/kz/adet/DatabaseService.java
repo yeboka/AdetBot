@@ -1,5 +1,7 @@
 package kz.adet;
 
+import kz.adet.entity.User;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.*;
@@ -8,7 +10,6 @@ import java.util.List;
 import java.util.Properties;
 
 public class DatabaseService {
-    // FIXME try to process exception if we lose connection to DB
     private Connection connection;
     private static DatabaseService databaseService;
 
@@ -38,18 +39,36 @@ public class DatabaseService {
         return properties;
     }
 
+
     public List<Long> getChatIds() throws SQLException {
         List<Long> list = new ArrayList<>();
         PreparedStatement statement = connection.prepareStatement("select chatid from activehabits;");
         ResultSet resultSet = statement.executeQuery();
 
         while (resultSet.next()) {
-            list.add((long) resultSet.getInt("chatid"));
+           list.add((long) resultSet.getInt("chatid"));
         }
-
         return list;
     }
 
+    public User getUser(long chatid) throws SQLException, IOException {
+        PreparedStatement statement = connection.prepareStatement("select * from users where chatid = ?");
+        statement.setLong(1, chatid);
+        ResultSet resultSet = statement.executeQuery();
+        
+        User user = null;
+        while (resultSet.next()){
+           user =  new User(
+                    resultSet.getLong("chatid"),
+                    resultSet.getString("username"),
+                    resultSet.getString("firstname"),
+                    resultSet.getString("lastname"),
+                    resultSet.getString("language_")
+            );
+        }
+        return user;
+    }
+    
     public String getLang(long chatId) throws SQLException {
         PreparedStatement statement = connection.prepareStatement("select language_ from users where chatid = ?;");
         statement.setLong(1, chatId);
