@@ -1,6 +1,9 @@
 package kz.adet;
 
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+
+import java.sql.SQLException;
+
 import org.telegram.telegrambots.meta.api.methods.ActionType;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.send.SendChatAction;
@@ -44,6 +47,44 @@ public class AdetBot extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
+
+        SendMessage sendMessage = new SendMessage();
+        Long chatId = update.getMessage().getChatId();
+        sendMessage.setChatId(chatId.toString());
+        DatabaseService databaseService = null;
+        try {
+            databaseService = DatabaseService.getInstance();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        if(update.hasMessage() && update.getMessage().hasText()) {
+            if (update.getMessage().getText().equals("/new_habit")) {
+                try {
+                    if(!databaseService.validHabit(chatId)){
+                        sendMessage.setText("Sende ali byryngy adetin bitpedi");
+                    }
+                    else {
+                        String message = "Zhana adetindi engiz";
+                        sendMessage.setText(message);
+                    }
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            } else {
+                try {
+                    databaseService.addNewHabit(chatId, update.getMessage().getText());
+                    sendMessage.setText("Adetin satti engizildi");
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            try {
+                execute(sendMessage);
+            } catch (TelegramApiException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
         SendMessage response1 = new SendMessage();
 
         String lan = "kz";
@@ -125,6 +166,7 @@ public class AdetBot extends TelegramLongPollingBot {
 
 
         }
+
 
     }
 

@@ -10,7 +10,8 @@ import java.util.List;
 import java.util.Properties;
 
 public class DatabaseService {
-private Connection connection;
+
+    private Connection connection;
     private static DatabaseService databaseService;
 
     private DatabaseService () throws IOException {
@@ -95,6 +96,25 @@ private Connection connection;
 
         return resultSet.getString("nameofhabit");
     }
+    public boolean validHabit(long chatId) throws SQLException {
+        PreparedStatement statement = connection.prepareStatement("select * from activehabits where chatid = ?;");
+        statement.setLong(1, chatId);
+        ResultSet resultSet = statement.executeQuery();
+        resultSet.next();
+        if(resultSet.getRow() != 0)
+            return false;
+        return true;
+    }
+    public void addNewHabit(long ch, String nameofHabit) throws SQLException {
+        PreparedStatement statement = connection.prepareStatement("" + "insert into activehabits (chatid, nameofhabit, story)" +"values (?, ?, ?)");
+        statement.setLong(1,ch);
+        statement.setString(2,nameofHabit);
+        statement.setString(3,"");
+        statement.executeUpdate();
+        statement.close();
+
+    }
+
 
 
 
