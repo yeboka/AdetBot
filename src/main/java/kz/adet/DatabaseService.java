@@ -1,5 +1,7 @@
 package kz.adet;
 
+import kz.adet.entity.User;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.*;
@@ -8,8 +10,8 @@ import java.util.List;
 import java.util.Properties;
 
 public class DatabaseService {
-    // FIXME try to process exception if we lose connection to DB
-    private static Connection connection;
+
+    private Connection connection;
     private static DatabaseService databaseService;
 
     private DatabaseService () throws IOException {
@@ -46,8 +48,25 @@ public class DatabaseService {
         while (resultSet.next()) {
             list.add((long) resultSet.getInt("chatid"));
         }
-
         return list;
+    }
+
+    public User getUser(long chatid) throws SQLException, IOException {
+        PreparedStatement statement = connection.prepareStatement("select * from users where chatid = ?");
+        statement.setLong(1, chatid);
+        ResultSet resultSet = statement.executeQuery();
+
+        User user = null;
+        while (resultSet.next()){
+            user =  new User(
+                    resultSet.getLong("chatid"),
+                    resultSet.getString("username"),
+                    resultSet.getString("firstname"),
+                    resultSet.getString("lastname"),
+                    resultSet.getString("language_")
+            );
+        }
+        return user;
     }
 
     public String getLang(long chatId) throws SQLException {
@@ -98,4 +117,18 @@ public class DatabaseService {
 
 
 
+
+    public void addUsers(Users user){
+        try{
+        PreparedStatement statement = connection.prepareStatement(""  + "INSERT INTO users (chatid,username,language_)" + "VALUES (?,?,?)");
+        statement.setLong(1,user.getChatId());
+        statement.setString(2,user.getUsername());
+        statement.setString(3,user.getLanguage());
+        statement.executeUpdate();
+        statement.close();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
