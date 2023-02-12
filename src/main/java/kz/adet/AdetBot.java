@@ -1,14 +1,32 @@
 package kz.adet;
 
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.meta.api.methods.ActionType;
+import org.telegram.telegrambots.meta.api.methods.ParseMode;
+import org.telegram.telegrambots.meta.api.methods.send.SendChatAction;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
+import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.User;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AdetBot extends TelegramLongPollingBot {
 
     private String botUsername;
     private String botToken;
 
-    public AdetBot (String botUsername, String botToken) {
+
+    public AdetBot(String botUsername, String botToken) {
         this.botUsername = botUsername;
         this.botToken = botToken;
     }
@@ -26,6 +44,93 @@ public class AdetBot extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
+        SendMessage response1 = new SendMessage();
+
+        String lan = "kz";
+
+        if(update.hasCallbackQuery()){
+            CallbackQuery callbackQuery =  update.getCallbackQuery();
+            String data = callbackQuery.getData();
+            Long chatId = callbackQuery.getMessage().getChatId();
+            String userName = callbackQuery.getFrom().getUserName();
+
+            Message messageFromData = callbackQuery.getMessage();
+            if(data.equals("ru")){
+                response1.setText("Ты выбрал русский язык!");
+                response1.setParseMode("MarkDown");
+                response1.setChatId(messageFromData.getChatId());
+                lan = "ru";
+
+                try {
+                    execute(response1);
+                } catch (TelegramApiException e) {
+                    e.printStackTrace();
+                }
+            }
+            if(data.equals("kz")){
+                lan = "kz";
+                response1.setText("Сен қазақ тілін таңдадын!");
+                response1.setParseMode("MarkDown");
+                response1.setChatId(messageFromData.getChatId());
+
+
+                try {
+                    execute(response1);
+                } catch (TelegramApiException e) {
+                    e.printStackTrace();
+                }
+            }
+            Users user = new Users();
+            user.setUsername(userName);
+            user.setChatId(chatId);
+            user.setLanguage(lan);
+            try {
+                DatabaseService.getInstance().addUsers(user);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        String command = update.getMessage().getText();
+
+
+        if (command.equals("/start")) {
+            String message = " Salem!Senimen birge adet_bot.Men sagan zhana adet kalyptastyruga komektesemin!Esimindi ter";
+            SendMessage response = new SendMessage();
+            response.setChatId(update.getMessage().getChatId().toString());
+            response.setText(message);
+
+            InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+
+            List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
+            List<InlineKeyboardButton> buttonsList = new ArrayList<>();
+            InlineKeyboardButton button1 = new InlineKeyboardButton();
+            InlineKeyboardButton button2 = new InlineKeyboardButton();
+            buttonsList.add(button1);
+            buttonsList.add(button2);
+            buttons.add(buttonsList);
+            button1.setText("Kazakh");
+            button2.setText("Russian");
+            button1.setCallbackData("kz");
+            button2.setCallbackData("ru");
+            inlineKeyboardMarkup.setKeyboard(buttons);
+            response.setReplyMarkup(inlineKeyboardMarkup);
+
+            try {
+                execute(response);
+            } catch (TelegramApiException E) {
+                E.printStackTrace();
+            }
+
+
+
+        }
 
     }
+
 }
+
+
+
+
+
