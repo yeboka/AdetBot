@@ -10,11 +10,10 @@ import java.util.List;
 import java.util.Properties;
 
 public class DatabaseService {
-    // TODO try to process exception if we lose connection to DB
     private Connection connection;
     private static DatabaseService databaseService;
 
-    DatabaseService() throws IOException {
+    private DatabaseService () throws IOException {
         Properties properties = getProperties();
         String url = properties.getProperty("db.url");
         String username = properties.getProperty("db.username");
@@ -40,17 +39,17 @@ public class DatabaseService {
         return properties;
     }
 
-//    public List<Long> getChatIds() throws SQLException {
-//        List<Long> list = new ArrayList<>();
-//        PreparedStatement statement = connection.prepareStatement("select chatid from activehabits;");
-//        ResultSet resultSet = statement.executeQuery();
-//
-//        while (resultSet.next()) {
-//            list.add((long) resultSet.getInt("chatid"));
-//        }
-//
-//        return list;
-//    }
+
+    public List<Long> getChatIds() throws SQLException {
+        List<Long> list = new ArrayList<>();
+        PreparedStatement statement = connection.prepareStatement("select chatid from activehabits;");
+        ResultSet resultSet = statement.executeQuery();
+
+        while (resultSet.next()) {
+           list.add((long) resultSet.getInt("chatid"));
+        }
+        return list;
+    }
 
     public User getUser(long chatid) throws SQLException, IOException {
         PreparedStatement statement = connection.prepareStatement("select * from users where chatid = ?");
@@ -69,40 +68,25 @@ public class DatabaseService {
         }
         return user;
     }
+    
+    public String getLang(long chatId) throws SQLException {
+        PreparedStatement statement = connection.prepareStatement("select language_ from users where chatid = ?;");
+        statement.setLong(1, chatId);
+        ResultSet resultSet = statement.executeQuery();
+        resultSet.next();
 
+        return resultSet.getString("language_");
 
-//    public User getUserByChatId(long chatId) throws SQLException {
-//        PreparedStatement statement = connection.prepareStatement("select * from users where chatid = ?;");
-//        statement.setLong(1, chatId);
-//
-//        ResultSet resultSet = statement.executeQuery();
-//        resultSet.next();
-//
-////        return new User(
-////                resultSet.getString("chatId"),
-////                resultSet.getString("name"),
-////                resultSet.getString("userLanguage")
-////        );
-//    }
+    }
 
-//    public String getLang(long chatId) throws SQLException {
-//        PreparedStatement statement = connection.prepareStatement("select language_ from users where chatid = ?;");
-//        statement.setLong(1, chatId);
-//        ResultSet resultSet = statement.executeQuery();
-//        resultSet.next();
-//
-//        return resultSet.getString("language_");
-//
-//    }
-//
-//    public String getFirstName(long chatId) throws SQLException {
-//        PreparedStatement statement = connection.prepareStatement("select firstname from users where chatid = ?;");
-//        statement.setLong(1, chatId);
-//        ResultSet resultSet = statement.executeQuery();
-//        resultSet.next();
-//
-//        return resultSet.getString("firstname");
-//    }
+    public String getFirstName(long chatId) throws SQLException {
+        PreparedStatement statement = connection.prepareStatement("select firstname from users where chatid = ?;");
+        statement.setLong(1, chatId);
+        ResultSet resultSet = statement.executeQuery();
+        resultSet.next();
+
+        return resultSet.getString("firstname");
+    }
 
     public String getNameOfHabit(long chatId) throws SQLException {
         PreparedStatement statement = connection.prepareStatement("select nameofhabit from activehabits where chatid = ?;");
@@ -112,4 +96,6 @@ public class DatabaseService {
 
         return resultSet.getString("nameofhabit");
     }
+
+
 }
