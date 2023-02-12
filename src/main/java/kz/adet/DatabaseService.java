@@ -9,7 +9,7 @@ import java.util.Properties;
 
 public class DatabaseService {
     // FIXME try to process exception if we lose connection to DB
-    private Connection connection;
+    private static Connection connection;
     private static DatabaseService databaseService;
 
     private DatabaseService () throws IOException {
@@ -77,6 +77,25 @@ public class DatabaseService {
 
         return resultSet.getString("nameofhabit");
     }
+    public boolean validHabit(long chatId) throws SQLException {
+        PreparedStatement statement = connection.prepareStatement("select * from activehabits where chatid = ?;");
+        statement.setLong(1, chatId);
+        ResultSet resultSet = statement.executeQuery();
+        resultSet.next();
+        if(resultSet.getRow() != 0)
+            return false;
+        return true;
+    }
+    public void addNewHabit(long ch, String nameofHabit) throws SQLException {
+        PreparedStatement statement = connection.prepareStatement("" + "insert into activehabits (chatid, nameofhabit, story)" +"values (?, ?, ?)");
+        statement.setLong(1,ch);
+        statement.setString(2,nameofHabit);
+        statement.setString(3,"");
+        statement.executeUpdate();
+        statement.close();
+
+    }
+
 
 
 }
