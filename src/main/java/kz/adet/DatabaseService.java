@@ -1,5 +1,7 @@
 package kz.adet;
 
+import kz.adet.entity.User;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.*;
@@ -8,7 +10,7 @@ import java.util.List;
 import java.util.Properties;
 
 public class DatabaseService {
-    private static Connection connection;
+private Connection connection;
     private static DatabaseService databaseService;
 
     private DatabaseService () throws IOException {

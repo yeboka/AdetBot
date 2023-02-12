@@ -18,8 +18,7 @@ public class Main{
         String botUsername = properties.getProperty("bot.username");
         String botToken = properties.getProperty("bot.token");
 
-
-
+        NotificationService.getInstance(botToken, botUsername).startNotificationService();
 
         TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);
         telegramBotsApi.registerBot(new AdetBot(botUsername, botToken));
