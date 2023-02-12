@@ -18,12 +18,12 @@ public class Main{
         String botUsername = properties.getProperty("bot.username");
         String botToken = properties.getProperty("bot.token");
 
-        DatabaseService db = new DatabaseService();
-        try {
-            db.getTable();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+//        DatabaseService db = new DatabaseService();
+//        try {
+////            db.getTable();
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
 
         TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);
         telegramBotsApi.registerBot(new AdetBot(botUsername, botToken));
