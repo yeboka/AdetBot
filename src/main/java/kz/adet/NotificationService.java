@@ -1,5 +1,6 @@
 package kz.adet;
 
+import kz.adet.entity.User;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
@@ -32,8 +33,7 @@ public final class NotificationService  {
 
     public void startNotificationService () {
         LocalDateTime now = LocalDateTime.now();
-        // "15:00"
-        TimeEvaluateService timeToSleep = new TimeEvaluateService(17, 25);
+        TimeEvaluateService timeToSleep = new TimeEvaluateService(17, 44);
         ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
         try {
             scheduler.scheduleWithFixedDelay(new BroadCast(botToken, botUsername),
@@ -59,17 +59,17 @@ class BroadCast implements Runnable {   // thread to send notification message f
     @Override
     public void run() {
         try {
-            List<Long> chatIds = databaseService.getChatIds();
-            assert chatIds != null;   // assert like return with condition
-            for (long chatId:
-                    chatIds) {
+            List<User> users = databaseService.getUsers();
+            assert users != null;   // assert like return with condition
+            for (User user:
+                    users) {
                 sendMessage = new SendMessage();
-                sendMessage.setChatId(chatId);
-                sendMessage.setText(Objects.requireNonNull(SwitchingLanguageService.getNotificationText(chatId)));
+                sendMessage.setChatId(user.getChatId());
+                sendMessage.setText(Objects.requireNonNull(TextService.getInstance().getMessageText(user, TextCascade.NOTIFICATION)));
                 bot.execute(sendMessage);
                 System.out.println("notification send!");
             }
-        } catch ( SQLException | TelegramApiException e) {
+        } catch (SQLException | TelegramApiException | IOException e) {
             e.printStackTrace();
         }
     }

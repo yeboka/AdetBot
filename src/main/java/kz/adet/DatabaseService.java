@@ -51,22 +51,22 @@ public class DatabaseService {
         return list;
     }
 
-    public User getUser(long chatid) throws SQLException, IOException {
-        PreparedStatement statement = connection.prepareStatement("select * from users where chatid = ?");
-        statement.setLong(1, chatid);
+    public List<User> getUsers() throws SQLException {
+        ArrayList<User> users = new ArrayList<>();
+
+        PreparedStatement statement = connection.prepareStatement("select users.* from activehabits, users where users.chatid = activehabits.chatid");
         ResultSet resultSet = statement.executeQuery();
 
-        User user = null;
         while (resultSet.next()){
-            user =  new User(
-                    resultSet.getLong("chatid"),
-                    resultSet.getString("username"),
-                    resultSet.getString("firstname"),
-                    resultSet.getString("lastname"),
-                    resultSet.getString("language_")
-            );
+            User user = new User();
+            user.setChatId(resultSet.getLong("chatid"));
+            user.setUserName(resultSet.getString("username"));
+            user.setFirstName(resultSet.getString("firstname"));
+            user.setLanguage_(resultSet.getString("language_"));
+            users.add(user);
         }
-        return user;
+
+        return users;
     }
 
     public String getLang(long chatId) throws SQLException {
@@ -96,6 +96,7 @@ public class DatabaseService {
 
         return resultSet.getString("nameofhabit");
     }
+
     public boolean validHabit(long chatId) throws SQLException {
         PreparedStatement statement = connection.prepareStatement("select * from activehabits where chatid = ?;");
         statement.setLong(1, chatId);
@@ -105,6 +106,7 @@ public class DatabaseService {
             return false;
         return true;
     }
+
     public void addNewHabit(long ch, String nameofHabit) throws SQLException {
         PreparedStatement statement = connection.prepareStatement("" + "insert into activehabits (chatid, nameofhabit, story)" +"values (?, ?, ?)");
         statement.setLong(1,ch);
@@ -114,9 +116,6 @@ public class DatabaseService {
         statement.close();
 
     }
-
-
-
 
     public void addUser(User user){
         try{

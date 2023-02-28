@@ -1,18 +1,5 @@
 package kz.adet.entity;
 
-import kz.adet.DatabaseService;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import sun.text.normalizer.UnicodeSet;
-
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-
 
 public class User {
     private Long chatId;
@@ -69,4 +56,7 @@ public class User {
         this.language_ = language;
     }
 
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
 }

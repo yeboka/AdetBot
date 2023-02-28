@@ -12,11 +12,19 @@ import java.util.Properties;
 // TODO: 26.01.2023 need to change name
 public class TextService {
     private final Properties textProperties;
+    private static TextService textService;
 
-    public TextService() throws IOException {
+    private TextService() throws IOException {
         this.textProperties = new Properties();
         InputStream inputStream = TextService.class.getClassLoader().getResourceAsStream("text.properties");
         this.textProperties.load(inputStream);
+    }
+
+    public static TextService getInstance() throws IOException {
+        if (textService == null)
+            textService = new TextService();
+
+        return textService;
     }
 
     /**
@@ -25,12 +33,12 @@ public class TextService {
 
     //TODO receive as param User object instead of database,
     // then in param this method should receive User and TextCascade
-    public String getTextWithUser(DatabaseService db, long chatId, TextCascade cascade) throws SQLException, IOException {
-        String text = textProperties.getProperty(String.format("%s.%s", db.getUser(chatId).getLanguage_(), cascade.getKeyText()));
+    public String getMessageText(User user, TextCascade cascade) throws SQLException, IOException {
+        String text = textProperties.getProperty(String.format("%s.%s", user.getLanguage_(), cascade.getKeyText()));
         if (text == null) {
             return null;
         }
-        text = text.replaceAll("<NAME>", db.getUser(chatId).getFirstName());
+        text = text.replaceAll("<NAME>", user.getFirstName());
 
         return text;
     }
