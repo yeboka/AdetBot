@@ -22,6 +22,9 @@ public class TextService {
     /**
      * Get text using user information and text cascade.
      */
+
+    //TODO receive as param User object instead of database,
+    // then in param this method should receive User and TextCascade
     public String getTextWithUser(DatabaseService db, long chatId, TextCascade cascade) throws SQLException, IOException {
         String text = textProperties.getProperty(String.format("%s.%s", db.getUser(chatId).getLanguage_(), cascade.getKeyText()));
         if (text == null) {

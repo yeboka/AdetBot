@@ -13,7 +13,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class NotificationService  {
+public final class NotificationService  {
     private static NotificationService notificationService;
     private final String botToken;
     private final String botUsername;
@@ -24,14 +24,16 @@ public class NotificationService  {
     }
 
     public static NotificationService getInstance(String botToken, String botUsername) {
-        if (notificationService == null) return new NotificationService(botToken, botUsername);
-        else return notificationService;
+        if (notificationService == null)
+            notificationService = new NotificationService(botToken, botUsername);
+
+        return notificationService;
     }
 
     public void startNotificationService () {
         LocalDateTime now = LocalDateTime.now();
         // "15:00"
-        TimeEvaluateService timeToSleep = new TimeEvaluateService(15, 0);
+        TimeEvaluateService timeToSleep = new TimeEvaluateService(17, 25);
         ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
         try {
             scheduler.scheduleWithFixedDelay(new BroadCast(botToken, botUsername),
