@@ -38,6 +38,13 @@ public class TextService {
         }
         text = text.replaceAll("<NAME>", user.getFirstName());
 
+        if (user.getLastName() != null){
+            text = text.replaceAll("<SURNAME>", user.getLastName());
+        }
+        else {
+            text = text.replaceAll("<SURNAME>", "");
+        }
+
         return text;
     }
 }
@@ -45,14 +52,16 @@ public class TextService {
 enum TextCascade {
     NOTIFICATION("notificationText"),
     GREETING("greetingText"),
-    ADD_HABIT("addHabitText"),
+    HABIT_ADDED("habitAddedText"),
     HABIT_COMPLETED_TEXT("habitCompletedText"),
-    HABIT_UNCOMPLETED_TEXT("habitUncompletedText");
+    HABIT_UNCOMPLETED_TEXT("habitUncompletedText"),
+    ADD_HABIT("addHabitText"),
+    FINISHING_HABIT("finishingHabit");
 
     @Getter
     private final String keyText;
 
-    TextCascade(String greetingText) {
-        keyText = greetingText;
+    TextCascade(String text) {
+        keyText = text;
     }
 }

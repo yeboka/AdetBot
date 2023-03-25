@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import org.w3c.dom.Text;
 
 import java.io.IOException;
 
@@ -15,6 +16,7 @@ public class AdetBot extends TelegramLongPollingBot {
 
     private String botUsername;
     private String botToken;
+    User user;
 
 
     public AdetBot(String botUsername, String botToken) {
@@ -50,19 +52,18 @@ public class AdetBot extends TelegramLongPollingBot {
                 sendMessage.setChatId(chatId.toString());
                 try {
                     if(!databaseService.validHabit(chatId)){
-                        sendMessage.setText("Sende ali byryngy adetin bitpedi");
+                        sendMessage.setText(TextService.getInstance().getMessageText(user, TextCascade.FINISHING_HABIT));
                     }
                     else {
-                        String message = "Zhana adetindi engiz";
-                        sendMessage.setText(message);
+                        sendMessage.setText(TextService.getInstance().getMessageText(user, TextCascade.ADD_HABIT));
                     }
                     execute(sendMessage);
-                } catch (SQLException | TelegramApiException e) {
+                } catch (SQLException | TelegramApiException | IOException e) {
                     throw new RuntimeException(e);
                 }
             }
             else if (update.getMessage().getText().equals("/start")){
-                 User user = new User(update.getMessage().getChatId(),
+                 user = new User(update.getMessage().getChatId(),
                          update.getMessage().getFrom().getUserName(),
                          update.getMessage().getFrom().getFirstName(),
                          update.getMessage().getFrom().getLastName(),
@@ -74,7 +75,7 @@ public class AdetBot extends TelegramLongPollingBot {
                      SendMessage message = new SendMessage();
                      message.setChatId(user.getChatId());
                      message.setText(TextService.getInstance().getMessageText(user, TextCascade.GREETING));
-
+                     System.out.println(message.getText());
                      execute(message);
                  } catch (SQLException | IOException | TelegramApiException e) {
                      throw new RuntimeException(e);
@@ -86,9 +87,10 @@ public class AdetBot extends TelegramLongPollingBot {
                 sendMessage.setChatId(chatId.toString());
                 try {
                     databaseService.addNewHabit(chatId, update.getMessage().getText());
-                    sendMessage.setText("Adetin satti engizildi");
+                    sendMessage.setText(TextService.getInstance().getMessageText(user, TextCascade.HABIT_ADDED));
+
                     execute(sendMessage);
-                } catch (SQLException | TelegramApiException e) {
+                } catch (SQLException | TelegramApiException | IOException e) {
                     throw new RuntimeException(e);
                 }
             }
