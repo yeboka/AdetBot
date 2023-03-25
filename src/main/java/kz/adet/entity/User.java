@@ -16,12 +16,6 @@ public class User {
         this.language_ = language_;
     }
 
-    public User (long chatId, String userName, String language_) {
-        this.chatId = chatId;
-        this.userName = userName;
-        this.language_ = language_;
-    }
-
     public User() {}
 
     public Long getChatId() {
@@ -58,5 +52,9 @@ public class User {
 
     public void setFirstName(String firstName) {
         this.firstName = firstName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 }

@@ -33,7 +33,7 @@ public final class NotificationService  {
 
     public void startNotificationService () {
         LocalDateTime now = LocalDateTime.now();
-        TimeEvaluateService timeToSleep = new TimeEvaluateService(17, 44);
+        TimeEvaluateService timeToSleep = new TimeEvaluateService(19, 5);
         ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
         try {
             scheduler.scheduleWithFixedDelay(new BroadCast(botToken, botUsername),

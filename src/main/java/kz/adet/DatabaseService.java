@@ -119,10 +119,12 @@ public class DatabaseService {
 
     public void addUser(User user){
         try{
-        PreparedStatement statement = connection.prepareStatement(""  + "INSERT INTO users (chatid,username,language_)" + "VALUES (?,?,?)");
+        PreparedStatement statement = connection.prepareStatement(""  + "INSERT INTO users (chatid,username, firstname, lastname, language_)" + "VALUES (?,?,?,?,?)");
         statement.setLong(1,user.getChatId());
         statement.setString(2,user.getUserName());
-        statement.setString(3,user.getLanguage_());
+        statement.setString(3,user.getFirstName());
+        statement.setString(4,user.getLastName());
+        statement.setString(5,user.getLanguage_());
         statement.executeUpdate();
         statement.close();
         }
