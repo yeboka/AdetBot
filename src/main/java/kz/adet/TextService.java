@@ -2,14 +2,12 @@ package kz.adet;
 
 import kz.adet.entity.User;
 import lombok.Getter;
-import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.Properties;
 
-// TODO: 26.01.2023 need to change name
 public class TextService {
     private final Properties textProperties;
     private static TextService textService;
